@@ -7,13 +7,13 @@ const formatHours = (hours) => {
   const h = Math.floor(totalSeconds / 3600);
   const m = Math.floor((totalSeconds % 3600) / 60);
   const s = totalSeconds % 60;
-  
+
   if (h > 0) return `${h}h ${m}m`;
   if (m > 0) return `${m}m ${s}s`;
   return `${s}s`;
 };
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || '';
 
 export default function Timesheets() {
   const [attendances, setAttendances] = useState([]);
@@ -70,10 +70,10 @@ export default function Timesheets() {
   const filteredAttendances = useMemo(() => {
     return attendances.filter(a => {
       const empName = usersMap[a.userId?._id || a.userId] || a.employeeId || '';
-      
+
       // Search by employee
       if (searchTerm && !empName.toLowerCase().includes(searchTerm.toLowerCase())) return false;
-      
+
       // Filter by attendance status
       if (statusFilter && a.attendanceType !== statusFilter) return false;
 
@@ -125,7 +125,7 @@ export default function Timesheets() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `timesheets_${new Date().toISOString().slice(0,10)}.csv`);
+    link.setAttribute("download", `timesheets_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -133,11 +133,11 @@ export default function Timesheets() {
 
   const openEditModal = (record) => {
     setEditingRecord(record);
-    
+
     const inDate = new Date(record.clockIn);
     inDate.setMinutes(inDate.getMinutes() - inDate.getTimezoneOffset());
     setClockInStr(inDate.toISOString().slice(0, 16));
-    
+
     if (record.clockOut) {
       const outDate = new Date(record.clockOut);
       outDate.setMinutes(outDate.getMinutes() - outDate.getTimezoneOffset());
@@ -145,7 +145,7 @@ export default function Timesheets() {
     } else {
       setClockOutStr('');
     }
-    
+
     setEditStatus(record.status || 'Clocked In');
     setEditAttendanceType(record.attendanceType || 'Present');
     setEditModalOpen(true);
@@ -153,11 +153,11 @@ export default function Timesheets() {
 
   const openSummaryModal = (userId, empName) => {
     const userRecords = attendances.filter(a => (a.userId?._id || a.userId) === userId);
-    
+
     let totalAllTime = 0;
     let totalThisWeek = 0;
     let totalThisMonth = 0;
-    
+
     const now = new Date();
     const startOfWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay());
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -219,7 +219,7 @@ export default function Timesheets() {
           <h1 className="text-2xl font-bold text-text">Timesheets</h1>
           <p className="text-secondary text-sm">Manage employee working hours and attendance</p>
         </div>
-        <button 
+        <button
           onClick={handleExportCSV}
           className="flex items-center space-x-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors"
         >
@@ -257,8 +257,8 @@ export default function Timesheets() {
       <div className="bg-surface p-4 rounded-xl border border-gray-100 shadow-sm mb-6 flex flex-wrap gap-4 items-center">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder="Search employee..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
@@ -267,7 +267,7 @@ export default function Timesheets() {
         </div>
         <div className="flex items-center space-x-2">
           <span className="text-sm text-secondary">From:</span>
-          <input 
+          <input
             type="date"
             value={startDate}
             onChange={e => setStartDate(e.target.value)}
@@ -276,7 +276,7 @@ export default function Timesheets() {
         </div>
         <div className="flex items-center space-x-2">
           <span className="text-sm text-secondary">To:</span>
-          <input 
+          <input
             type="date"
             value={endDate}
             onChange={e => setEndDate(e.target.value)}
@@ -328,11 +328,10 @@ export default function Timesheets() {
                     <span className="font-bold text-text">{formatHours(a.totalHours || 0)}</span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${
-                      (a.attendanceType || 'Present') === 'Present' ? 'bg-green-100 text-green-700' :
+                    <span className={`px-2 py-1 rounded text-xs font-medium ${(a.attendanceType || 'Present') === 'Present' ? 'bg-green-100 text-green-700' :
                       a.attendanceType === 'Late' ? 'bg-orange-100 text-orange-700' :
-                      a.attendanceType === 'Absent' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'
-                    }`}>
+                        a.attendanceType === 'Absent' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'
+                      }`}>
                       {a.attendanceType || 'Present'}
                     </span>
                     {a.status === 'Completed' ? (
@@ -342,14 +341,14 @@ export default function Timesheets() {
                     )}
                   </td>
                   <td className="px-6 py-4 text-right flex justify-end space-x-2">
-                    <button 
+                    <button
                       onClick={() => openSummaryModal(a.userId?._id || a.userId, usersMap[a.userId?._id || a.userId] || a.employeeId)}
                       className="text-blue-500 hover:bg-blue-50 p-2 rounded-lg transition-colors"
                       title="View Employee Summary"
                     >
                       <Eye size={16} />
                     </button>
-                    <button 
+                    <button
                       onClick={() => openEditModal(a)}
                       className="text-primary hover:bg-primary/10 p-2 rounded-lg transition-colors"
                       title="Edit Record"
@@ -381,22 +380,22 @@ export default function Timesheets() {
                 <X size={20} />
               </button>
             </div>
-            
+
             <div className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-secondary mb-1">Clock In</label>
-                <input 
-                  type="datetime-local" 
+                <input
+                  type="datetime-local"
                   value={clockInStr}
                   onChange={e => setClockInStr(e.target.value)}
                   className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:border-primary"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-secondary mb-1">Clock Out</label>
-                <input 
-                  type="datetime-local" 
+                <input
+                  type="datetime-local"
                   value={clockOutStr}
                   onChange={e => setClockOutStr(e.target.value)}
                   className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:border-primary"
@@ -431,13 +430,13 @@ export default function Timesheets() {
             </div>
 
             <div className="p-4 border-t border-gray-100 bg-gray-50 flex justify-end space-x-3">
-              <button 
+              <button
                 onClick={() => setEditModalOpen(false)}
                 className="px-4 py-2 text-secondary hover:bg-gray-200 rounded-lg transition-colors font-medium text-sm"
               >
                 Cancel
               </button>
-              <button 
+              <button
                 onClick={saveEdit}
                 className="px-4 py-2 bg-primary text-white hover:bg-primary/90 rounded-lg transition-colors font-medium text-sm flex items-center space-x-2"
               >
@@ -462,14 +461,14 @@ export default function Timesheets() {
                 <X size={20} />
               </button>
             </div>
-            
+
             <div className="p-8 flex flex-col items-center">
               <div className="w-20 h-20 bg-primary/10 text-primary rounded-full flex items-center justify-center text-3xl font-bold mb-4">
                 {selectedUserSummary.name.charAt(0).toUpperCase()}
               </div>
               <h2 className="text-2xl font-bold text-text mb-1">{selectedUserSummary.name}</h2>
               <p className="text-secondary text-sm mb-6">Total Shifts: {selectedUserSummary.shiftCount}</p>
-              
+
               <div className="w-full space-y-3">
                 <div className="bg-gray-50 p-4 rounded-xl flex justify-between items-center">
                   <span className="font-medium text-secondary">Hours This Week</span>
@@ -487,7 +486,7 @@ export default function Timesheets() {
             </div>
 
             <div className="p-4 border-t border-gray-100 bg-gray-50 flex justify-end">
-              <button 
+              <button
                 onClick={() => setViewSummaryModalOpen(false)}
                 className="px-6 py-2 bg-gray-200 text-gray-700 hover:bg-gray-300 rounded-lg transition-colors font-medium text-sm"
               >

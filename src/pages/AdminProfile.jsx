@@ -4,17 +4,17 @@ import { User, Lock, Save, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 export default function AdminProfile() {
   const { currentUser, updateProfile } = useAuth();
-  
+
   const [name, setName] = useState(currentUser?.name || '');
   const [pinCode, setPinCode] = useState('');
-  
+
   const [status, setStatus] = useState({ type: '', message: '' });
   const [loading, setLoading] = useState(false);
 
   const handleUpdate = async (e) => {
     e.preventDefault();
     setStatus({ type: '', message: '' });
-    
+
     if (!name) {
       setStatus({ type: 'error', message: 'Name is required' });
       return;
@@ -28,20 +28,22 @@ export default function AdminProfile() {
         role: currentUser.role,
         isActive: currentUser.isActive
       };
-      
+
       // Only send pinCode if they intend to change it
       if (pinCode.trim()) {
         updatePayload.pinCode = pinCode;
       }
 
-      const response = await fetch(`http://localhost:5000/api/users/${currentUser._id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(updatePayload)
-      });
-
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/users/${currentUser._id}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updatePayload)
+        }
+      );
       const data = await response.json();
 
       if (!response.ok) {
@@ -74,9 +76,8 @@ export default function AdminProfile() {
         </div>
 
         {status.message && (
-          <div className={`p-4 rounded-xl mb-6 flex items-center space-x-3 text-sm font-medium ${
-            status.type === 'error' ? 'bg-danger/10 text-danger' : 'bg-success/10 text-success'
-          }`}>
+          <div className={`p-4 rounded-xl mb-6 flex items-center space-x-3 text-sm font-medium ${status.type === 'error' ? 'bg-danger/10 text-danger' : 'bg-success/10 text-success'
+            }`}>
             {status.type === 'error' ? <AlertCircle size={20} /> : <CheckCircle2 size={20} />}
             <span>{status.message}</span>
           </div>
@@ -131,9 +132,8 @@ export default function AdminProfile() {
             <button
               type="submit"
               disabled={loading}
-              className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold text-white transition-all transform active:scale-95 ${
-                loading ? 'bg-primary/70 cursor-not-allowed' : 'bg-primary hover:bg-primary/90 hover:shadow-lg'
-              }`}
+              className={`flex items-center space-x-2 px-6 py-3 rounded-xl font-semibold text-white transition-all transform active:scale-95 ${loading ? 'bg-primary/70 cursor-not-allowed' : 'bg-primary hover:bg-primary/90 hover:shadow-lg'
+                }`}
             >
               <Save size={20} />
               <span>{loading ? 'Saving...' : 'Save Changes'}</span>

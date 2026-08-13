@@ -21,14 +21,18 @@ export default function Login() {
     }),
     onSubmit: async (values, { setSubmitting }) => {
       setError('');
+
       try {
-        const response = await fetch('http://localhost:5000/api/users/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(values)
-        });
+        const response = await fetch(
+          `${import.meta.env.VITE_API_URL}/users/login`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(values)
+          }
+        );
 
         const data = await response.json();
 
@@ -71,9 +75,8 @@ export default function Login() {
                 <input
                   type="text"
                   name="employeeId"
-                  className={`w-full pl-10 pr-4 py-3 bg-background border ${
-                    formik.touched.employeeId && formik.errors.employeeId ? 'border-danger' : 'border-gray-200'
-                  } rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all`}
+                  className={`w-full pl-10 pr-4 py-3 bg-background border ${formik.touched.employeeId && formik.errors.employeeId ? 'border-danger' : 'border-gray-200'
+                    } rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all`}
                   placeholder="Enter your Admin ID"
                   value={formik.values.employeeId}
                   onChange={formik.handleChange}
@@ -94,9 +97,8 @@ export default function Login() {
                 <input
                   type="password"
                   name="pinCode"
-                  className={`w-full pl-10 pr-4 py-3 bg-background border ${
-                    formik.touched.pinCode && formik.errors.pinCode ? 'border-danger' : 'border-gray-200'
-                  } rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all`}
+                  className={`w-full pl-10 pr-4 py-3 bg-background border ${formik.touched.pinCode && formik.errors.pinCode ? 'border-danger' : 'border-gray-200'
+                    } rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all`}
                   placeholder="Enter your PIN"
                   value={formik.values.pinCode}
                   onChange={formik.handleChange}
@@ -111,9 +113,8 @@ export default function Login() {
             <button
               type="submit"
               disabled={formik.isSubmitting}
-              className={`w-full py-4 rounded-xl font-bold text-white transition-all transform active:scale-[0.98] ${
-                formik.isSubmitting ? 'bg-primary/70 cursor-not-allowed' : 'bg-primary hover:bg-primary/90 hover:shadow-lg'
-              }`}
+              className={`w-full py-4 rounded-xl font-bold text-white transition-all transform active:scale-[0.98] ${formik.isSubmitting ? 'bg-primary/70 cursor-not-allowed' : 'bg-primary hover:bg-primary/90 hover:shadow-lg'
+                }`}
             >
               {formik.isSubmitting ? 'Authenticating...' : 'Sign In'}
             </button>
