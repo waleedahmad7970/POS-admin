@@ -10,6 +10,7 @@ import Transactions from './components/Transactions';
 import Categories from './components/Categories';
 import Timesheets from './components/Timesheets';
 import Settings from './components/Settings';
+import TillReports from './components/TillReports';
 
 import Login from './pages/Login';
 import AdminProfile from './pages/AdminProfile';
@@ -56,6 +57,7 @@ export default function App() {
                   <Route path="/staff" element={<StaffManagement />} />
                   <Route path="/categories" element={<Categories />} />
                   <Route path="/transactions" element={<Transactions />} />
+                  <Route path="/till-reports" element={<TillReports />} />
                   <Route path="/timesheets" element={<Timesheets />} />
                   <Route path="/settings" element={<Settings />} />
                   <Route path="/profile" element={<AdminProfile />} />

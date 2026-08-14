@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Package, ReceiptText, Settings, Tags, ArrowRightLeft, Users, Clock } from 'lucide-react';
+import { LayoutDashboard, Package, ReceiptText, Settings, Tags, ArrowRightLeft, Users, Clock, Calculator } from 'lucide-react';
 
 const navItems = [
   { name: 'Dashboard', path: '/', icon: LayoutDashboard },
@@ -8,6 +8,7 @@ const navItems = [
   { name: 'Stock Control', path: '/stock', icon: ArrowRightLeft },
   { name: 'Categories', path: '/categories', icon: Tags },
   { name: 'Transactions', path: '/transactions', icon: ReceiptText },
+  { name: 'Till Reports', path: '/till-reports', icon: Calculator },
   { name: 'Staff', path: '/staff', icon: Users },
   { name: 'Timesheets', path: '/timesheets', icon: Clock },
 ];
